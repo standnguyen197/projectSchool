@@ -1,0 +1,152 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+
+var app = require('../app');
+var debug = require('debug')('mean-app:server');
+// var http = require('http');
+
+/**
+ * Get port from environment and store in Express.
+ */
+var port = normalizePort(process.env.PORT || '8080');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+// var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+http.listen(port, function(){
+  console.log('Server connected! Port 8080');
+});
+var CartPerson = [];
+require('../coreStand/handlingOpenLiveCart/index')(io);
+require('../coreStand/handlingVoice/index')(io);
+
+// // Socket Server
+// io.on('connection', function(socket){
+//   console.log('a user connected');
+//   // Gửi random về client!
+  
+//   var rn = require("randomstring");
+//   var randomNumber = rn.generate({
+//     length: 4,
+//     charset: 'hex',
+//     capitalization: 'uppercase'
+//   });
+//   socket.emit('randomNumber', { randomNumber });
+
+//   socket.on('replyRandom', function(msg){
+//     var upMessage = msg.messageFB;
+//     var uppercaseMes = upMessage.toUpperCase();
+//     var randomCheckMessage = uppercaseMes.indexOf(randomNumber);
+    
+//     if(randomCheckMessage != '-1'){
+      
+//       CartPerson.push(msg);
+//       console.log(CartPerson.length);
+//       if(CartPerson.length == '2'){
+//         randomNumber = rn.generate({
+//           length: 4,
+//           charset: 'hex',
+//           capitalization: 'uppercase'
+//         });
+//         CartPerson = [];
+//         socket.emit('randomNumber', { randomNumber });
+//       }
+//     }
+//   });
+  
+//    socket.on('voiceSocketPush', function(msg){
+//      console.log(msg);
+//      if(msg.noteContent == 'chuyển hướng'){
+//       socket.emit('voiceSocketReply', { msg,dataCode: '1' });
+//     }
+//      socket.emit('voiceSocketReply', { msg,dataCode: '0' });
+//   });
+
+//   socket.on('pingServer', function(msg){
+//     socket.emit('messageChannel', { msg });
+//   });
+
+// });
+
+// End socket server
+
+
+
+http.on('error', onError);
+http.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = http.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
