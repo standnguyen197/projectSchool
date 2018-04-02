@@ -41,7 +41,7 @@
     text-align: center;
     color: #FFF;
     cursor: pointer;
-    font-size: 18px;">
+    font-size: 18px;" disabled>
 <b>BẮT ĐẦU NÀO</b>
   </b-list-group-item>
 <!-- Kết thúc live -->
@@ -52,7 +52,7 @@
     border-left: 8px solid rgb(255, 193, 7);
     border-bottom: none;
     border-top: 1px solid rgba(0,0,0,.125);
-    ">
+    " >
     <b style="
     font-size: 13px;
     color: #FFF">FANPAGE OR PROFILE</b>

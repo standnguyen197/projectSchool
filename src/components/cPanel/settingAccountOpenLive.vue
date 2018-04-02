@@ -1,7 +1,7 @@
 <template>
 <div style="bg-admin">
 <vue-headful
-    title="FANPAGE OR PROFILE || Cài đặt tài khoản OpenLive"
+    title="FANPAGE OR PROFILE || Cài đặt tài khoản OpenLive || iBee.Vn"
 />
 <b-container fluid>
 <b-row>
@@ -20,7 +20,6 @@
         <b-col sm="12" md="8" offset-md="2">
             <b-form @submit="onSubmit">
             <vue-snotify></vue-snotify>
-                <p>{{ selectTypeAccountFanpageLive }}</p>
                 <h5 style="color: orange;font-size: 17px;">CHỌN TÀI KHOẢN KHI LIVE</h5>
                 <span style="color: #7a7a7a;"> Bạn live bằng Facebook Cá Nhân hay Fanpage ?? <i style="color:orange" v-b-popover.hover.top="'Bạn sử dụng ứng dụng của iBee.Vn LIVE ở Trang cá nhân hay ở FanPage?? Nếu bạn LIVE ở Trang Cá Nhân thì hãy chọn Trang Cá Nhân nhé!'" class="fa fa-question-circle"/></span>
                 <b-form-select v-model="selectTypeAccountLive" :options="optionsTypeAccountLive" class="mb-3" />
@@ -34,7 +33,7 @@
                     <option :value="null" disabled>Hãy chọn Fanpage bạn LIVE</option>
                   </template>
                   <!-- these options will appear after the ones from 'options' prop -->
-                   <option v-for="item in optionsTypeAccountFanpageLive" :value="item.id">{{ item.name }}</option>
+                   <option v-for="item in optionsTypeAccountFanpageLive" :value="item.id+'|'+item.access_token">{{ item.name }}</option>
                 </b-form-select>
                 </div>
                 <h5 style="color: orange;font-size: 17px;">CHỌN MÃ SẢN PHẨM</h5>
@@ -145,14 +144,49 @@ export default {
               }
         })
       }
-    }
+    },
+
   },
   methods: {
     onSubmit(event){
      event.preventDefault();
+     const tokenJWT = this.$session.get('jwt');
      console.log('Đã gửi thông tin');
-     console.log(`Tài khoản: ${this.selectTypeAccountLive} - Tên Fanpage: ${this.selectTypeAccountFanpageLive} - 
-     Kiểu mã: ${this.selectTypeCodeProduct} - Loại sản phẩm: ${this.selectTypeProductShop} - Khách dự bị : ${this.userReserve}`)
+
+     const typeAccountLive = this.selectTypeAccountLive; // Loại tài khoản khi Live
+     const typeFanpageAccountLiveString = this.selectTypeAccountFanpageLive; // Tên Fanpage nếu có
+     const typeCodeProduct = this.selectTypeCodeProduct; // Loại mã sản phẩm khi Live
+     const typeProductShop = this.selectTypeProductShop; // Nhiều sản phẩm hay ít sản phẩm
+     const userReserve = this.userReserve; // Số người dự bị
+      var typeFanpageAccountLive = ''// Tên Fanpage nếu có {Hoàn thành}
+     if(typeAccountLive == 'profile'){
+        typeFanpageAccountLive = null;
+     }else{
+        typeFanpageAccountLive = typeFanpageAccountLiveString.split('|')[0];
+        console.log(typeAccountLive);
+        const accessTokenPage = typeFanpageAccountLiveString.split('|')[1];
+        this.$session.set('accessTokenPage', accessTokenPage);
+     }
+    
+     const _idUser = this.$session.get('authUser')._id;
+
+      axios.post('/api/settingAccountOpenLive', 
+      {
+          _idUser,
+          typeAccountLive,
+          typeFanpageAccountLive,
+          typeCodeProduct,
+          typeProductShop,
+          userReserve
+      },{ 
+        headers: { Authorization: `Bearer ${tokenJWT}` } 
+      }).then(function (response) {
+          console.log(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+
     },
     displayNotification() {
         this.$snotify.html(`<div class="snotifyToast__title" style="color:orange;font-size:20px"><b>Tips cho bạn!</b></div>

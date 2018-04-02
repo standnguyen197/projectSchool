@@ -1,7 +1,7 @@
 <template>
 <div style="bg-admin">
 <vue-headful
-    title="Bắt đầu supportLive!"
+    title="Bắt đầu supportLive || IBEE.VN "
 />
 <b-container fluid>
 <b-row>

@@ -75,8 +75,7 @@ function verifyToken(req, res, next) {
 }
 /* UPDATE Auth */
 router.put('/:id', function(req, res, next) {
-  console
-  .log(req.body);
+  console.log(req.body);
   Auth.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
     if (err) return next(err);
     res.json(post);

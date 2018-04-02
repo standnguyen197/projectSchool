@@ -1,7 +1,7 @@
 <template>
 <div style="bg-admin">
 <vue-headful
-    title="Quản lý BeeVintage!"
+    title="QUẢN LÝ IBEE.VN"
 />
 <b-container fluid>
 <b-row>

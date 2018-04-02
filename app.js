@@ -11,6 +11,9 @@ var account = require('./routes/account');
 
 var liveOpen = require('./routes/liveOpen');
 
+// Cài đặt thông tin tài khoản cho Khách
+
+var settingAccountOpenLive = require('./routes/checkSettingAccoutOpenLive');
 
 var app = express();
 
@@ -34,6 +37,9 @@ app.use('/api/AuthFacebook', account);
 // -------- liveOpen -------//
 app.use('/api/liveOpen', liveOpen);
 
+// ------ settingAccountOpenLive --------- //
+
+app.use('/api/settingAccountOpenLive' ,settingAccountOpenLive);
 // ======================================= END API ========================================= //
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {

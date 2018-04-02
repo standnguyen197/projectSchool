@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-var checkAuth = require('../models/settingAccountOpenLive.js');
+var checkSettingAccountOpenLiveModel = require('../models/settingAccountOpenLive.js');
 var jwt = require('jsonwebtoken');
 
 /* GET ALL AuthS */
@@ -32,27 +32,48 @@ router.get('/:id', function(req, res, next) {
 });
 
 /* SAVE Auth */
-router.post('/', function(req, res, next) {
- console.log(req.body);
- const _idUser = req.body._id;
- const userDataSign = req.body;
-    jwt.sign({userDataSign}, 'thekingstand' , (err,token) => {
-        Auth.findById(_idUser, function (err, userData) {
-            if (err || !userData){
-                Auth.create(req.body, function (err, userData) {
-                    if (err || !userData){
-                        res.status(404).json({
-                            message: '404 Data'
-                        });
-                    }else{
-                        res.status(200).json({userData, token});
-                    }
-                });
-            }else{
-                res.status(200).json({userData, token});
+router.post('/', verifyToken , function(req, res, next) {
+console.log(req.body);
+ const dataBox = req.body;
+ const _idUser = req.body._idUser;
+
+ jwt.verify(req.token, 'thekingstand', (err,authData)=>{
+    if(err){
+        res.sendStatus(403);
+    }else{
+    var modelCheckSetting = new checkSettingAccountOpenLiveModel(dataBox);
+    checkSettingAccountOpenLiveModel.findOneAndUpdate(dataBox, {$set: modelCheckSetting}, {upsert: true}, (err, res) => {
+            if (err) {
+                // handle error
+            } else {
+               console.log(res);
             }
         });
-    });
+        // checkSettingAccountOpenLiveModel.findByIdAndUpdate(_idUser , dataBox, (err, info) => {
+        //      if (err || !info){
+        //          res.json({imes: 'Error'})
+        //      }else{
+        //         console.log(info);
+        //         //  if(info.length == 0){
+                     
+        //         //     checkSettingAccountOpenLiveModel.create(dataBox,(err, data) => {
+
+        //         //         if (err|| !data){
+        //         //             res.json({err});
+        //         //         }else{
+        //         //             res.json({imes: 'Lưu thành công!'});
+        //         //         }
+
+        //         //       })
+
+        //         //  }else{
+        //         //     res.json({imes: 'Đã có trong dữ liệu'});
+        //         //  }
+        //      } 
+        // });
+    }
+  })  
+    
 });
 
 function verifyToken(req, res, next) {
